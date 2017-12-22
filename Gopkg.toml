@@ -19,4 +19,12 @@
 # [[override]]
 #  name = "github.com/x/y"
 #  version = "2.4.0"
+[[constraint]]
+  name = "github.com/go-sql-driver/mysql"
+  branch = "master"
+  source = "github.com/go-sql-driver/mysql"
 
+[[constraint]]
+  name = "github.com/reiver/go-porterstemmer"
+  branch = "master"
+  source = "github.com/reiver/go-porterstemmer"
