@@ -17,17 +17,17 @@ func Handle(er error){
   }
 }
 
-type *Indexer struct{
+type Indexer struct{
   db *sql.DB
 }
 
 func (obj *Indexer) OpenCon(){
   var er error
-  obj.db,er = sql.Open("mysql", "username:password@tcp(127.0.0.1:3306)/dbname")
+  obj.db,er = sql.Open("mysql","root:root@tcp(127.0.0.1)/mini_google")
   if er!=nil{
     log.Fatal(er)
   }
-  defer obj.db.Close()
+  //defer obj.db.Close()
 }
 
 func (obj *Indexer) GetWordsFreq(file *os.File) map[string]int {
@@ -38,8 +38,8 @@ func (obj *Indexer) GetWordsFreq(file *os.File) map[string]int {
   words:=make(map[string]int)
 
   for scanner.Scan(){
-
     linetext := scanner.Text()
+    log.Println(linetext)
     line := strings.Split(linetext," ")
 
     for _,word := range line{
@@ -80,7 +80,7 @@ func (obj *Indexer) InsertDoc(file *os.File) int {
   er := obj.db.Ping()
   Handle(er)
 
-  ins,er := obj.db.Prepare("insert into documents(@Url, @Title, @Summary) values (?, ?, ?)")
+  ins,er := obj.db.Prepare("insert into documents(url, title, summary) values (?, ?, ?)")
   Handle(er)
   defer ins.Close()
 
@@ -95,7 +95,7 @@ func (obj *Indexer) InsertDoc(file *os.File) int {
 
 func (obj *Indexer) GetWordID(word string) int {
 
-  stmt,er := obj.db.Prepare("select ID from words where [name] = ?")
+  stmt,er := obj.db.Prepare("select id from words where name = ?")
   Handle(er)
   defer stmt.Close()
 
@@ -118,6 +118,7 @@ func (obj *Indexer) ProcFile(path string){
   defer file.Close()
 
   docID := obj.InsertDoc(file)
+  file.Seek(0, 0)
 
   freq := obj.GetWordsFreq(file)
 
@@ -132,7 +133,7 @@ func (obj *Indexer) InsertWordsToDoc(freq, id map[string]int, doc int){
   er := obj.db.Ping()
   Handle(er)
 
-  ins,er := obj.db.Prepare("insert into words_documents(@Word_ID, @Document_ID, @Freq) values (?, ?, ?)")
+  ins,er := obj.db.Prepare("insert into words_documents(word_id, document_id, freq) values (?, ?, ?)")
   Handle(er)
   defer ins.Close()
 
@@ -147,7 +148,7 @@ func (obj *Indexer) InsertWords(mp map[string]int) map[string]int {
   er := obj.db.Ping()
   Handle(er)
 
-  ins,er := obj.db.Prepare("insert into words(@name) values (?)")
+  ins,er := obj.db.Prepare("insert into words(name) values (?)")
   Handle(er)
   defer ins.Close()
 
@@ -158,6 +159,7 @@ func (obj *Indexer) InsertWords(mp map[string]int) map[string]int {
     _ = f
 
     id := obj.GetWordID(word)
+    log.Printf("ID: %d", id)
 
     if id==-1 {
 
@@ -170,7 +172,6 @@ func (obj *Indexer) InsertWords(mp map[string]int) map[string]int {
     }
 
     ids[word]=id
-
   }
 
   return ids
