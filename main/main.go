@@ -1,13 +1,14 @@
 package main
 import(
-  
+  "fmt"
+  "os"
 )
 
 func main(){
 
   var obj Indexer = Indexer{}
-  path := "/home/mahmod/filestest"
+  PATH := os.Getenv("PATH")
   obj.OpenCon()
-  obj.ReadFolder(path)
-
+  obj.ReadFolder(fmt.Sprintf("%s",PATH))
+  obj.CloseCon()
 }

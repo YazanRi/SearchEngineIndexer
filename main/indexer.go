@@ -1,12 +1,11 @@
 package main
 import(
-  //"fmt"
+  "fmt"
   "github.com/reiver/go-porterstemmer"
   "log"
   "os"
   "bufio"
   "strings"
-  //"gopkg.in/fatih/set.v0"
   "database/sql"
   _ "github.com/go-sql-driver/mysql"
 )
@@ -22,12 +21,16 @@ type Indexer struct{
 }
 
 func (obj *Indexer) OpenCon(){
+
+  USERNAME, PASSWORD, HOST, DBNAME := os.Getenv("USERNAME"), os.Getenv("PASSWORD"), os.Getenv("HOST"), os.Getenv("DBNAME")
+
   var er error
-  obj.db,er = sql.Open("mysql","root:root@tcp(127.0.0.1)/mini_google")
-  if er!=nil{
-    log.Fatal(er)
-  }
-  //defer obj.db.Close()
+  obj.db,er = sql.Open("mysql",fmt.Sprintf("%s:%s@tcp(%s)/%s", USERNAME, PASSWORD, HOST, DBNAME))
+  Handle(er)
+}
+
+func (obj *Indexer) CloseCon(){
+  obj.db.Close()
 }
 
 func (obj *Indexer) GetWordsFreq(file *os.File) map[string]int {
@@ -70,6 +73,7 @@ func (obj *Indexer) InsertDoc(file *os.File) int {
     }else {
       line := strings.Split(linetext," ")
       for _,word := range line{
+
         if len(summary)<300 {
           summary+=" "+word
         }
