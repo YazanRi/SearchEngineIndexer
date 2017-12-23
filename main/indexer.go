@@ -24,7 +24,7 @@ type Indexer struct {
 
 func (obj *Indexer) OpenCon() {
 
-	USERNAME, PASSWORD, HOST, DBNAME := os.Getenv("USERNAME"), os.Getenv("PASSWORD"), os.Getenv("HOST"), os.Getenv("DBNAME")
+	USERNAME, PASSWORD, HOST, DBNAME := os.Getenv("MYSQL_USERNAME"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_HOST"), os.Getenv("MYSQL_DBNAME")
 
 	var er error
 	obj.db, er = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s", USERNAME, PASSWORD, HOST, DBNAME))
