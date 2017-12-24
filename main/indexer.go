@@ -7,7 +7,8 @@ import (
 	"log"
 	"os"
 	"strings"
-
+	"github.com/reiver/go-porterstemmer"
+	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 )
 
