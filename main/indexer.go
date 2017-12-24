@@ -44,9 +44,15 @@ func (obj *Indexer) GetWordsFreq(file *os.File) map[string]int {
 
 	for scanner.Scan() {
 		linetext := scanner.Text()
+		if linetext == "" || linetext == "\n" || linetext == " " {
+			continue
+		}
 		line := strings.Split(linetext, " ")
 
 		for _, word := range line {
+			if word == "" || word == "\n" || word == " " {
+				continue
+			}
 			stemmed := porterstemmer.StemString(word)
 			words[stemmed]++
 		}
