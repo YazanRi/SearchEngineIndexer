@@ -70,10 +70,10 @@ func (obj *Indexer) InsertDoc(file *os.File) int {
 	cnt := 0
 	var url, title, summary string
 
+	first := 0
 	for scanner.Scan() {
 		linetext := scanner.Text()
 		cnt += 1
-		first := 0
 		if cnt == 1 {
 			url = linetext
 		} else if cnt == 2 {
@@ -83,11 +83,13 @@ func (obj *Indexer) InsertDoc(file *os.File) int {
 			for _, word := range line {
 
 				if len(summary) < 300 {
-					if first == 1 {
-						summary += " "
+					if word != "" || word != "\n" || word != " " {
+						if first == 1 {
+							summary += " "
+						}
+						summary += word
+						first = 1
 					}
-					summary += word
-					first = 1
 				}
 			}
 		}
