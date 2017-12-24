@@ -44,7 +44,6 @@ func (obj *Indexer) GetWordsFreq(file *os.File) map[string]int {
 
 	for scanner.Scan() {
 		linetext := scanner.Text()
-		log.Println(linetext)
 		line := strings.Split(linetext, " ")
 
 		for _, word := range line {
@@ -68,6 +67,7 @@ func (obj *Indexer) InsertDoc(file *os.File) int {
 	for scanner.Scan() {
 		linetext := scanner.Text()
 		cnt += 1
+		first := 0
 		if cnt == 1 {
 			url = linetext
 		} else if cnt == 2 {
@@ -77,7 +77,11 @@ func (obj *Indexer) InsertDoc(file *os.File) int {
 			for _, word := range line {
 
 				if len(summary) < 300 {
-					summary += " " + word
+					if first == 1 {
+						summary += " "
+					}
+					summary += word
+					first = 1
 				}
 			}
 		}
@@ -164,7 +168,6 @@ func (obj *Indexer) InsertWords(mp map[string]int) map[string]int {
 		_ = f
 
 		id := obj.GetWordID(word)
-		log.Printf("ID: %d", id)
 
 		if id == -1 {
 
