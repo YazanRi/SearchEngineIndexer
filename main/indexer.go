@@ -7,8 +7,8 @@ import (
 	"log"
 	"os"
 	"strings"
+
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/reiver/go-porterstemmer"
 )
 
 func Handle(er error) {
@@ -198,7 +198,7 @@ func (obj *Indexer) ReadFolder(path string) {
 	Handle(er)
 	defer dir.Close()
 
-	filenames, er := dir.Readdirnames(1000)
+	filenames, er := dir.Readdirnames(10000)
 	Handle(er)
 
 	for _, name := range filenames {
